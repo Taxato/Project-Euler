@@ -1,10 +1,10 @@
-highcard -> 100 + highestCardVal
-pair -> 200 + paircard*10 + highestCardVal
-twopair -> 300 + highestPair*10 + highCard
-threeof -> 400 + valThree*10 + highCard
-straight -> 500 + highcard
-flush -> 600 + highCard
-house -> 700 + houseOver
-fourof -> 800 + valFour
-straightflush -> 900 + highCard
-royalflush -> 1000
+highcard -> 1000 + highestCardVal
+pair -> 2000 + paircard*10 + highestCardVal
+twopair -> 3000 + highestPair*10 + highCard
+threeof -> 4000 + valThree*10 + highCard
+straight -> 5000 + highcard
+flush -> 6000 + highCard
+house -> 7000 + houseOver
+fourof -> 8000 + valFour
+straightflush -> 9000 + highCard
+royalflush -> 10000

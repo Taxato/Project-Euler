@@ -27,3 +27,7 @@ export const pentagonal = n => (n * (3 * n - 1)) / 2;
 export const hexagonal = n => n * (2 * n - 1);
 export const heptagonal = n => (n * (5 * n - 3)) / 2;
 export const octagonal = n => n * (3 * n - 2);
+
+export function sumArr(arr) {
+	return arr.reduce((sum, cur) => sum + cur, 0);
+}

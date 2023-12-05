@@ -1,9 +1,18 @@
+import { sumArr } from "./helpers.js";
+
 class Hand {
 	constructor(cards) {
 		this.cards = cards.map(c => new Card(c));
+
+		this.cardVals = this.cards.map(c => c.val).sort((a, b) => a - b);
+		this.cardSuits = this.cards.map(c => c.suit);
 	}
 
-	get val() {}
+	get handValue() {
+		const highCard = this.highestCard.val;
+		if (this.isStraight && this.isFlush && highCard === 13) return 10000;
+		if (this.isStraight && this.isFlush) return 9000 + highCard;
+	}
 
 	get highestCard() {
 		return this.cards.reduce((high, cur) =>
@@ -20,8 +29,15 @@ class Hand {
 	}
 
 	get isStraight() {
-		if (new Set(this.cards.map(c => c.val)).size !== 5) return false;
+		if (new Set(this.cardVals).size !== 5) return false;
+
+		for (let i = 0; i < 4; i++) {
+			if (this.cardVals[i] !== this.cardVals[i + 1] - 1) return false;
+		}
+		return true;
 	}
+
+	get isFourOf() {}
 }
 
 class Card {
@@ -1054,8 +1070,8 @@ AS KD 3D JD 8H 7C 8C 5C QD 6C`
 	});
 
 const firstHand = input[0][0];
-console.log(firstHand.highestCard);
-console.log(firstHand.isFlush);
+// console.log(firstHand.highestCard);
+// console.log(firstHand.isFlush);
 
 const test = new Hand(["AH", "6H", "3H", "7H", "JH"]);
 const test2 = new Hand(["AH", "KH", "TC", "QC", "JH"]);
@@ -1069,7 +1085,7 @@ console.log(test3.isStraight);
 // input.forEach(game => {
 // 	const [player1, player2] = game;
 
-// 	if (player1.val > player2.val) numOneWins++;
+// 	if (player1.handValue > player2.handValue) numOneWins++;
 // });
 
 // console.log(numOneWins);
