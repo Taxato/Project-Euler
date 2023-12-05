@@ -1,11 +1,12 @@
 import { Permutation } from "js-combinatorics";
-
-const triangle = n => (n * (n + 1)) / 2;
-const square = n => n ** 2;
-const pentagonal = n => (n * (3 * n - 1)) / 2;
-const hexagonal = n => n * (2 * n - 1);
-const heptagonal = n => (n * (5 * n - 3)) / 2;
-const octagonal = n => n * (3 * n - 2);
+import {
+	triangle,
+	square,
+	pentagonal,
+	hexagonal,
+	heptagonal,
+	octagonal,
+} from "./helpers";
 
 function isCyclic(set) {
 	let res = true;
