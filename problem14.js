@@ -9,6 +9,7 @@ for (let i = 0; i < 1e6; i++) {
 }
 
 console.log(longestChain);
+// console.log(collatsMemo);
 
 function collatsSequence(num, memo = {}) {
 	if (num < 2) return 0;

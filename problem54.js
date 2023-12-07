@@ -1,5 +1,3 @@
-import { sumArr } from "./helpers.js";
-
 class Hand {
 	constructor(cards) {
 		this.cards = cards.map(c => new Card(c));
@@ -10,8 +8,24 @@ class Hand {
 
 	get handValue() {
 		const highCard = this.highestCard.val;
-		if (this.isStraight && this.isFlush && highCard === 13) return 10000;
-		if (this.isStraight && this.isFlush) return 9000 + highCard;
+		const straight = this.isStraight;
+		const flush = this.isFlush;
+		const fourOf = this.isFourOf;
+		const house = this.isHouse;
+		const threeOf = this.isThreeOf;
+		const twoPair = this.isTwoPair;
+		const pair = this.isPair;
+
+		if (straight && flush && highCard === 13) return 10000;
+		if (straight && flush) return 9000 + highCard;
+		if (fourOf) return 8000 + fourOf;
+		if (house) return 7000 + house;
+		if (flush) return 6000 + highCard;
+		if (straight) return 5000 + highCard;
+		if (threeOf) return 4000 + threeOf;
+		if (twoPair) return 3000 + twoPair * 10 + highCard;
+		if (pair) return 2000 + pair * 10 + highCard;
+		return 1000 + highCard;
 	}
 
 	get highestCard() {
@@ -37,7 +51,49 @@ class Hand {
 		return true;
 	}
 
-	get isFourOf() {}
+	get isFourOf() {
+		for (const val of this.cardVals) {
+			if (this.cardVals.filter(v => v === val).length === 4) return val;
+		}
+		return null;
+	}
+
+	get isHouse() {
+		const set = new Set(this.cardVals);
+		if (set.size === 2) {
+			const vals = set.values();
+			const len = this.cardVals.filter(c => c === vals[0]).length;
+			if (len === 3) return vals[0];
+			else if (len === 2) return vals[1];
+			else return null;
+		} else return null;
+	}
+
+	get isThreeOf() {
+		for (const val of this.cardVals) {
+			if (this.cardVals.filter(v => v === val).length === 3) return val;
+		}
+		return null;
+	}
+
+	get isTwoPair() {
+		if (new Set(this.cardVals).size === 3 && this.isThreeOf === null) {
+			console.log("Valid twoPair", this.cardVals);
+			return Math.max(
+				...this.cardVals.filter(
+					c => this.cardVals.filter(v => c === v).length === 2
+				)
+			);
+		} else return null;
+	}
+
+	get isPair() {
+		if (new Set(this.cardVals).size === 4) {
+			return this.cardVals.find(
+				c => this.cardVals.filter(f => c === f).length === 2
+			);
+		} else return null;
+	}
 }
 
 class Card {
@@ -1069,23 +1125,21 @@ AS KD 3D JD 8H 7C 8C 5C QD 6C`
 		return [new Hand(arr.slice(0, 5)), new Hand(arr.slice(5))];
 	});
 
-const firstHand = input[0][0];
-// console.log(firstHand.highestCard);
-// console.log(firstHand.isFlush);
+let numOneWins = 0;
+input.forEach(game => {
+	const [player1, player2] = game;
 
-const test = new Hand(["AH", "6H", "3H", "7H", "JH"]);
-const test2 = new Hand(["AH", "KH", "TC", "QC", "JH"]);
-const test3 = new Hand(["AH", "KH", "AC", "KD", "3D"]);
+	if (player1.handValue > player2.handValue) numOneWins++;
 
-console.log(test.isStraight);
-console.log(test2.isStraight);
-console.log(test3.isStraight);
+	console.log(
+		player1.cards.map(c => `${c.val} of ${c.suit}`).join(", "),
+		player1.handValue,
+		"---",
+		player2.cards.map(c => `${c.val} of ${c.suit}`).join(", "),
+		player2.handValue
+	);
+});
 
-// let numOneWins = 0;
-// input.forEach(game => {
-// 	const [player1, player2] = game;
+// console.log(input.at(-5)[0].isThreeOf);
 
-// 	if (player1.handValue > player2.handValue) numOneWins++;
-// });
-
-// console.log(numOneWins);
+console.log(numOneWins);

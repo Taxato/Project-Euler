@@ -6,7 +6,7 @@ import {
 	hexagonal,
 	heptagonal,
 	octagonal,
-} from "./helpers";
+} from "./helpers.js";
 
 function isCyclic(set) {
 	let res = true;
