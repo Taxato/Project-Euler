@@ -1,197 +1,121 @@
 import { Permutation } from "js-combinatorics";
+import _ from "lodash";
 import {
-	triangle,
-	square,
-	pentagonal,
-	hexagonal,
 	heptagonal,
+	hexagonal,
 	octagonal,
+	pentagonal,
+	square,
+	triangle,
 } from "./helpers.js";
 
-function isCyclic(set) {
-	let res = true;
-	for (let i = 0; i < set.length; i++) {
-		if (
-			String(set[i]).slice(0, 2) !==
-			// String(set[(i - 1 + set.length) % set.length]).slice(2)
-			(i === 0
-				? String(set[set.length - 1]).slice(2)
-				: String(set[i - 1]).slice(2))
-		) {
-			res = false;
-			break;
-		}
+function* genTriangles() {
+	let i = 1;
+	while (true) {
+		yield triangle(i);
+		i++;
+	}
+}
+function* genSquares() {
+	let i = 1;
+	while (true) {
+		yield square(i);
+		i++;
+	}
+}
+function* genPentagonals() {
+	let i = 1;
+	while (true) {
+		yield pentagonal(i);
+		i++;
+	}
+}
+function* genHexagonals() {
+	let i = 1;
+	while (true) {
+		yield hexagonal(i);
+		i++;
+	}
+}
+function* genHeptagonals() {
+	let i = 1;
+	while (true) {
+		yield heptagonal(i);
+		i++;
+	}
+}
+function* genOctagonals() {
+	let i = 1;
+	while (true) {
+		yield octagonal(i);
+		i++;
+	}
+}
+
+function genNumbers(iter) {
+	const res = [];
+	for (const n of iter) {
+		if (n >= 10000) break;
+		if (n >= 1000) res.push(n);
 	}
 	return res;
 }
 
-function possibleCyclic(set) {
-	for (const num of set) {
-		const matchStart = set.find(
-			n => n !== num && num.slice(0, 2) === n.slice(2)
-		);
-		const matchEnd = set.find(
-			n => n !== num && num.slice(2) === n.slice(0, 2)
-		);
+function splitNumbers(nums) {
+	const result = {};
+	for (const num of nums) {
+		const str = String(num);
 
-		if (!matchStart || !matchEnd) return false;
+		const prefix = str.slice(0, 2);
+		const suffix = str.slice(2);
+
+		if (!(prefix in result)) result[prefix] = [];
+		result[prefix].push(suffix);
 	}
-	const permutations = new Permutation(set);
-	for (const perm of permutations) {
-		if (isCyclic(perm)) return true;
-	}
-	return false;
+	return result;
 }
 
-const triangles = new Set();
-const squares = new Set();
-const pentagonals = new Set();
-const hexagonals = new Set();
-const heptagonals = new Set();
-const octagonals = new Set();
-
-let i = 1;
-while (true) {
-	const t = triangle(i);
-	const str = String(t);
-	if (str.length === 4) triangles.add(t);
-	else if (str.length > 4) break;
-	i++;
-}
-i = 0;
-while (true) {
-	const s = square(i);
-	const str = String(s);
-	if (str.length === 4) squares.add(s);
-	else if (str.length > 4) break;
-	i++;
-}
-i = 0;
-while (true) {
-	const p = pentagonal(i);
-	const str = String(p);
-	if (str.length === 4) pentagonals.add(p);
-	else if (str.length > 4) break;
-	i++;
-}
-i = 0;
-while (true) {
-	const h = hexagonal(i);
-	const str = String(h);
-	if (str.length === 4) hexagonals.add(h);
-	else if (str.length > 4) break;
-	i++;
-}
-i = 0;
-while (true) {
-	const h = heptagonal(i);
-	const str = String(h);
-	if (str.length === 4) heptagonals.add(h);
-	else if (str.length > 4) break;
-	i++;
-}
-i = 0;
-while (true) {
-	const o = octagonal(i);
-	const str = String(o);
-	if (str.length === 4) octagonals.add(o);
-	else if (str.length > 4) break;
-	i++;
-}
-
-let figurates = [
-	...triangles,
-	...squares,
-	...pentagonals,
-	...hexagonals,
-	...heptagonals,
-	...octagonals,
-].map(n => String(n));
-
-const blackList = new Set();
-function filterFigurates(set) {
-	const whiteList = [...set]
-		.map(t => String(t))
-		.filter(fig => {
-			const matchStart = figurates
-				.filter(fig => !set.has(+fig))
-				.find(
-					f =>
-						fig.slice(0, 2) === f.slice(2) &&
-						!blackList.has(+f) &&
-						fig !== f
-				);
-			const matchEnd = figurates
-				.filter(fig => !set.has(+fig))
-				.find(
-					f =>
-						fig.slice(2) === f.slice(0, 2) &&
-						!blackList.has(+f) &&
-						fig !== f
-				);
-			if (matchStart && matchEnd && matchStart !== matchEnd) return true;
-		});
-	[...set]
-		.filter(f => !whiteList.includes(String(f)))
-		.forEach(f => blackList.add(f));
-	return whiteList;
-}
-let filteredTriangles = filterFigurates(triangles);
-let filteredSquares = filterFigurates(squares);
-let filteredPentagonals = filterFigurates(pentagonals);
-let filteredHexagonals = filterFigurates(hexagonals);
-let filteredHeptagonals = filterFigurates(heptagonals);
-let filteredOctagonals = filterFigurates(octagonals);
-filteredTriangles = filterFigurates(triangles);
-filteredSquares = filterFigurates(squares);
-filteredPentagonals = filterFigurates(pentagonals);
-filteredHexagonals = filterFigurates(hexagonals);
-filteredHeptagonals = filterFigurates(heptagonals);
-filteredOctagonals = filterFigurates(octagonals);
-filteredTriangles = filterFigurates(triangles);
-
-console.log(triangles.size, filteredTriangles.length);
-console.log(squares.size, filteredSquares.length);
-console.log(pentagonals.size, filteredPentagonals.length);
-console.log(hexagonals.size, filteredHexagonals.length);
-console.log(heptagonals.size, filteredHeptagonals.length);
-console.log(octagonals.size, filteredOctagonals.length);
-
-main: for (const digit1 of [...filteredTriangles]) {
-	for (const digit2 of [...filteredSquares]) {
-		for (const digit3 of [...filteredPentagonals]) {
-			const set = [digit1, digit2, digit3];
-
-			if (possibleCyclic(set)) {
-				console.log(set);
-				break main;
-			}
+function recursion(setSoFar, splits) {
+	const prefix = setSoFar.at(-1).slice(2);
+	if (splits.length) {
+		const candidates = splits[0]?.[prefix] ? splits[0][prefix] : [];
+		for (const candidate of candidates) {
+			setSoFar.push(prefix + candidate);
+			const result = recursion(setSoFar, splits.slice(1));
+			if (result) return result;
+			setSoFar.pop();
 		}
+	} else {
+		if (prefix === setSoFar[0].slice(0, 2)) return setSoFar;
 	}
 }
 
-main: for (const digit1 of filteredTriangles) {
-	for (const digit2 of filteredSquares) {
-		for (const digit3 of filteredPentagonals) {
-			for (const digit4 of filteredHexagonals) {
-				for (const digit5 of filteredHeptagonals) {
-					for (const digit6 of filteredOctagonals) {
-						const set = [
-							digit1,
-							digit2,
-							digit3,
-							digit4,
-							digit5,
-							digit6,
-						];
+function solution() {
+	const allNumbers = [];
+	for (const iter of [
+		genTriangles(),
+		genSquares(),
+		genPentagonals(),
+		genHexagonals(),
+		genHeptagonals(),
+		genOctagonals(),
+	]) {
+		allNumbers.push(genNumbers(iter));
+	}
 
-						if (possibleCyclic(set)) {
-							console.log(set);
-							break main;
-						}
-					}
+	const splits = allNumbers.map(n => splitNumbers(n));
+
+	for (const s of new Permutation(splits.slice(1))) {
+		for (const [prefix, suffixes] of Object.entries(splits[0])) {
+			for (const suffix of suffixes) {
+				const result = recursion([prefix + suffix], s);
+				if (result) {
+					console.log(result.map(Number));
+					return _.sum(result.map(Number));
 				}
 			}
 		}
 	}
 }
+
+console.log(solution());

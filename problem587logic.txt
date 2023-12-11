@@ -1,0 +1,30 @@
+n = number of circles
+
+rectArea = 2n*2
+circleArea = Pi
+lSectionArea = 1-(Pi/4)
+diagonalAngle = aTan(rect.h/rect.w) = aTan(1/n)
+
+concaveTriangleArea = ?
+
+integral for area of concave triangle = 
+
+f(diagonal) = (1/n)x
+f(circles) = for(i = 0; i < n) -> (x+(2*i + 1))^2 + (y+1)^2 = 1
+
+firstCircle = (x+1)^2 + (y+1)^2 = 1
+
+for(let x = 0; x <= 1; x+=0.01){
+    for(let y = 0; y <= 1; y+=0.01){
+        if((x+1)**2 + (y+1)**2 === 1)
+        {
+            
+        }
+    }
+}
+
+(x-1)^2 + (y-1)^2 = 1
+(y-1)^2 = 1 - (x-1)^2
+y-1 = sqrt(-x^2+2x)
+y = sqrt(x^2+2x) +1
+f: y=-sqrt(-x^(2)+2 x)+1
